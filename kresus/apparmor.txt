@@ -1,0 +1,72 @@
+include <tunables/global>
+
+profile kresus flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/base>
+
+  # Capabilities
+  file,
+  signal (send) set=(kill,term,int,hup,cont),
+  capability chown,
+  capability fowner,
+  capability kill,
+
+  # S6-Overlay
+  /init ix,
+  /bin/** ix,
+  /usr/bin/** ix,
+  /run/{s6,s6-rc*,service}/** ix,
+  /package/** ix,
+  /command/** ix,
+  /etc/services.d/** rwix,
+  /etc/cont-init.d/** rwix,
+  /etc/cont-finish.d/** rwix,
+  /run/{,**} rwk,
+  /dev/tty rw,
+
+  # Access to options.json and other files within your addon
+  /data/options.json r,
+  /data/kresus/{,**} rw,
+
+  /package/admin/s6-2.11.2.0/command/s6-applyuidgid cx -> s6setuidgid,
+  profile s6setuidgid flags=(attach_disconnected,mediate_deleted) {
+    #include <abstractions/base>
+    capability setuid,
+    capability setgid,
+
+    signal (receive) set=("cont","kill","term"),
+
+    # Generic accesses
+    /package/admin/s6-2.11.2.0/command/s6-applyuidgid rm,
+
+    /bin/{bash,busybox} ix,
+    /dev/{null,tty} rw,
+    /etc/{group,hosts,os-release,passwd,resolv.conf,ssl/**} r,
+    /package/admin/** rmix,
+    /run/s6/container_environment** r,
+    /tmp/.bashio/{,**} rw,
+    /usr/bin/{curl,jq,ssl_client} rix,
+    /usr/lib/bashio/bashio ix,
+    /lib/** rmix,
+    /tmp/pip-install-** rw,
+
+    # Kresus specific accesses
+    /data/kresus_salt r,
+    /data/kresus/{,**} rw,
+    /etc/kresus/config.ini r,
+    /woob/ r,
+    /woob/** lrw,
+    /woob/.py-deps/** lrwix,
+
+    /usr/bin/{,**} r,
+    /usr/bin/git ix,
+    /usr/bin/gpgv ix,
+    /usr/bin/node ix,
+    /usr/bin/python3.11 ix,
+    /usr/bin/pip3 rix,
+    /usr/libexec/git-core/** ix,
+    /usr/libexec/kresus/** rix,
+    /usr/local/lib/node_modules/** rm,
+    /usr/local/lib/node_modules/kresus/bin/kresus.js rix,
+    /usr/share/** r,
+  }
+}

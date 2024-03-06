@@ -1,0 +1,27 @@
+configuration:
+  postgres_hostname:
+    name: "DB hostname"
+    description: >-
+      Hostname of the PostgreSQL database.
+  postgres_port:
+    name: "DB port"
+    description: >-
+      Port of the PostgreSQL database.
+  postgres_user:
+    name: "DB user"
+    description: >-
+      User to connect to the database.
+  postgres_password:
+    name: "DB password"
+    description: >-
+      Password of the database user.
+  postgres_database:
+    name: "DB database"
+    description: >-
+      Name of the kresus database.
+  http_basicauth:
+    name: "Authentication"
+    description: >-
+      Logins for HTTP basic auth authentication ("login:passwd" format, optional).
+network:
+  9876/tcp: Port to access kresus web server.

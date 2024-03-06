@@ -1,0 +1,33 @@
+name: Kresus
+version: "0.6.2"
+slug: kresus
+codenotary: ezlo@protonmail.com
+url: "https://github.com/ezlo-picori/hassio-addons/tree/main/kresus"
+description: Open source personal accounting management
+arch:
+  - armhf
+  - armv7
+  - aarch64
+  - amd64
+image: "ghcr.io/ezlo-picori/haos-addon-kresus-{arch}"
+init: false
+options:
+  postgres_hostname: homeassistant.local
+  postgres_port: 5432
+  postgres_user: kresus
+  postgres_password: null
+  postgres_database: kresus
+panel_icon: mdi:piggy-bank-outline
+ports:
+  9876/tcp: 9876
+ports_description:
+  9876/tcp: "The port to access kresus web server."
+schema:
+  postgres_hostname: str
+  postgres_port: int
+  postgres_user: str
+  postgres_password: password
+  postgres_database: str
+  http_basicauth: str?
+startup: system
+timeout: 20

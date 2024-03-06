@@ -1,0 +1,25 @@
+#!/usr/bin/with-contenv bashio
+
+# ==============================================================================
+# Init data directory
+# ==============================================================================
+if ! bashio::fs.directory_exists "${KRESUS_DIR}"; then
+  bashio::log.info "Create data directory \"${KRESUS_DIR}\""
+  mkdir "${KRESUS_DIR}"
+  chown "${KRESUS_USER}:${KRESUS_USER}" "${KRESUS_DIR}"
+  chmod 0700 "${KRESUS_DIR}"
+fi
+
+# ==============================================================================
+# Generate Kresus salt once
+# ==============================================================================
+if ! bashio::fs.file_exists "/data/kresus_salt"; then
+  pwgen 32 1 > /data/kresus_salt
+  chown "${KRESUS_USER}:${KRESUS_USER}" /data/kresus_salt
+  chmod 400 /data/kresus_salt
+fi
+
+# ==============================================================================
+# Start service as unprivileged user
+# ==============================================================================
+exec s6-setuidgid "${KRESUS_USER}" /usr/libexec/kresus/start.sh
